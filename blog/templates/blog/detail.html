@@ -20,7 +20,7 @@
                 </div>
                 {% with total_likes=post.users_like.count users_like=post.users_like.all %}
                     <div>
-                        <form action="{% url 'blog:post-like' post %}"
+                        <form action="{% url 'blog:post-like' post.slug %}"
                               method="post">
                             <h2>
                                 {{ total_likes }} like{{ total_likes|pluralize }}

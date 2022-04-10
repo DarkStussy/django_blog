@@ -3,7 +3,6 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from django.views.generic import DeleteView
 from taggit.models import Tag
 
 from blog.forms import CommentForm
@@ -19,7 +18,7 @@ def main(request, tag_slug=None):
         tag = get_object_or_404(Tag, slug=tag_slug)
         object_list = object_list.filter(tags__in=[tag])
 
-    paginator = Paginator(object_list, 3)  # 9 posts in each page
+    paginator = Paginator(object_list, 9)  # 9 posts in each page
     page = request.GET.get('page')
     try:
         posts = paginator.page(page)
@@ -67,7 +66,7 @@ def post_like(request, post):
         post.users_like.remove(request.user)
     else:
         post.users_like.add(request.user)
-    return HttpResponseRedirect(reverse('blog:post_detail', args=(post,)))
+    return HttpResponseRedirect(reverse('blog:post_detail', args=(post.slug,)))
 
 
 def delete_comment(request, pk):
