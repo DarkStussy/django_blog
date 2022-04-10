@@ -1,0 +1,15 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}Register done{% endblock %}
+
+{% block content %}
+    <main class="page projects-page">
+        <section class="portfolio-block projects-cards">
+            <div class="container text-center">
+                <h1>Welcome {{ new_user.first_name }}!</h1>
+                <p>Your account has been successfully created. Now you can <a class="btn btn-outline-primary btn-sm" href="{% url "accounts:login-user" %}"
+                                                                              style="color: black;">log in</a>.</p>
+            </div>
+        </section>
+    </main>
+{% endblock %}

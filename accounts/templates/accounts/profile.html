@@ -1,0 +1,19 @@
+{% extends 'blog/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+    <main class="page detail-page">
+        <section class="portfolio-block block-intro">
+            <div class="container text-center">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ user_form|crispy }}
+                    <button class="btn btn-primary" type="submit">Save</button>
+                </form>
+            </div>
+        </section>
+    </main>
+{% endblock %}

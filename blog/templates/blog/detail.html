@@ -1,0 +1,72 @@
+{% extends 'blog/base.html' %}
+
+{% load crispy_forms_tags %}
+{% load blog_tags %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+    <main class="page detail-page">
+        <section class="portfolio-block block-intro">
+            <div class="container">
+                {% if request.user.is_staff %}
+                    <a href="/admin/blog/post/{{ post.id }}/change" class="btn btn-primary">Edit</a><br><br>
+                {% endif %}
+                <h2>{{ post.title }}</h2>
+                <small class="text-muted">Published: {{ post.publish }}</small>
+                <small class="text-muted">Updated: {{ post.updated }}</small><br><br>
+                <div class="container text-start">
+                    {{ post.body|markdown }}<br><br>
+                </div>
+                {% with total_likes=post.users_like.count users_like=post.users_like.all %}
+                    <div>
+                        <form action="{% url 'blog:post-like' post %}"
+                              method="post">
+                            <h2>
+                                {{ total_likes }} like{{ total_likes|pluralize }}
+                            </h2>
+                            {% csrf_token %}
+                            <button type="submit" name="post_id" value="{{ post.id }}" class="btn btn-primary btn-sm">
+                                {% if request.user not in users_like %}Like{% else %}Unlike{% endif %}
+                            </button>
+                        </form>
+                        <br>
+                    </div>
+                {% endwith %}
+
+                {% if new_comment %}
+                    <h2>Your comment has been added.</h2>
+                    <a class="btn btn-primary" href="{{ post.get_absolute_url }}">Add another comment</a><br><br>
+                {% else %}
+                    <form method="post">
+                        <h2>Add a new comment</h2>
+                        {{ comment_form|crispy }}
+                        {% csrf_token %}
+                        <p>
+                            <button class="btn btn-primary" type="submit">Add comment</button>
+                        </p>
+                    </form><br>
+                {% endif %}
+                {% with comments.count as total_comments %}
+                    <h2>
+                        {{ total_comments }} comment{{ total_comments|pluralize }}
+                    </h2><br>
+                {% endwith %}
+                {% for comment in comments %}
+                    Comment {{ forloop.counter }} by {{ comment.user.username }}
+                    {{ comment.created|date:"D d M Y H:m" }}
+                    {{ comment.body|linebreaks }}
+                    {% if perms.blog.delete_comment %}
+                        <br><a class="btn btn-danger" href="{% url 'blog:delete-comment' comment.id %}">Delete!</a><br>
+                        <br>
+                    {% elif comment.user == request.user %}
+                        <br><a class="btn btn-danger" href="{% url 'blog:delete-comment' comment.id %}">Delete!</a><br>
+                        <br>
+                    {% endif %}
+                {% empty %}
+                    <p>There are no comments yet.</p>
+                {% endfor %}
+            </div>
+        </section>
+    </main>
+{% endblock %}
