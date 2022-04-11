@@ -26,26 +26,31 @@
                                 {{ total_likes }} like{{ total_likes|pluralize }}
                             </h2>
                             {% csrf_token %}
-                            <button type="submit" name="post_id" value="{{ post.id }}" class="btn btn-primary btn-sm">
-                                {% if request.user not in users_like %}Like{% else %}Unlike{% endif %}
-                            </button>
+                            {% if user.is_authenticated %}
+                                <button type="submit" name="post_id" value="{{ post.id }}"
+                                        class="btn btn-primary btn-sm">
+                                    {% if request.user not in users_like %}Like{% else %}Unlike{% endif %}
+                                </button>
+                            {% endif %}
                         </form>
                         <br>
                     </div>
                 {% endwith %}
 
-                {% if new_comment %}
-                    <h2>Your comment has been added.</h2>
-                    <a class="btn btn-primary" href="{{ post.get_absolute_url }}">Add another comment</a><br><br>
-                {% else %}
-                    <form method="post">
-                        <h2>Add a new comment</h2>
-                        {{ comment_form|crispy }}
-                        {% csrf_token %}
-                        <p>
-                            <button class="btn btn-primary" type="submit">Add comment</button>
-                        </p>
-                    </form><br>
+                {% if user.is_authenticated %}
+                    {% if new_comment %}
+                        <h2>Your comment has been added.</h2>
+                        <a class="btn btn-primary" href="{{ post.get_absolute_url }}">Add another comment</a><br><br>
+                    {% else %}
+                        <form method="post">
+                            <h2>Add a new comment</h2>
+                            {{ comment_form|crispy }}
+                            {% csrf_token %}
+                            <p>
+                                <button class="btn btn-primary" type="submit">Add comment</button>
+                            </p>
+                        </form><br>
+                    {% endif %}
                 {% endif %}
                 {% with comments.count as total_comments %}
                     <h2>

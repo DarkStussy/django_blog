@@ -9,7 +9,6 @@ from blog.forms import CommentForm
 from blog.models import Post, Comment
 
 
-@login_required
 def main(request, tag_slug=None):
     tags = Tag.objects.all()
     object_list = Post.published.all()
@@ -32,7 +31,6 @@ def main(request, tag_slug=None):
     return render(request, 'blog/posts.html', {'page': page, 'posts': posts, 'tag': tag, 'tags': tags})
 
 
-@login_required
 def post_detail(request, post):
     post = get_object_or_404(Post, slug=post, status='published')
 
